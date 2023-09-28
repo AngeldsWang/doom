@@ -45,4 +45,4 @@ All the third party packages configuration should go here.
 
 
 * Apply changes
-Once we add some changes in =init.el= or =package.el=, we need to run =~/.config/emacs/bin/doom sync= and restart emacs to make it effect.
+Once we add some changes in =init.el= or =package.el=, we need to run =~/.config/emacs/bin/doom sync= and restart emacs to take effect.
