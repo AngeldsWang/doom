@@ -1,0 +1,48 @@
+#+title: Readme
+
+* Install Emacs
+
+[[https://github.com/railwaycat/homebrew-emacsmacport][railwaycat/emacsmacport]] is recommended
+
+#+begin_src bash
+brew tap railwaycat/emacsmacport
+brew install --cask emacs-mac
+#+end_src
+
+
+* Install Doomemacs
+
+** Required Dependencies
+#+begin_src bash
+brew install ripgrep
+#+end_src
+
+** Doomemacs
+
+#+begin_src bash
+git clone --depth 1 https://github.com/doomemacs/doomemacs ~/.config/emacs
+~/.config/emacs/bin/doom install
+#+end_src
+
+This will generate some config files under =~/.config/doom=
+#+begin_src bash
+$ tree ~/.config/doom
+├── config.el
+├── init.el
+└── packages.el
+#+end_src
+
+
+* Config
+** init.el
+We can enable and disable all the integrated features in doom by uncomment and comment them.
+
+** config.el
+All your customized config, like keybindings will go here.
+
+** package.el
+All the third party packages configuration should go here.
+
+
+* Apply changes
+Once we add some changes in =init.el= or =package.el=, we need to run =~/.config/emacs/bin/doom sync= and restart emacs to make it effect.
