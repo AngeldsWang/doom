@@ -32,7 +32,7 @@
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
-(setq doom-theme 'doom-nova)
+(setq doom-theme 'doom-sora)
 
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
@@ -105,3 +105,14 @@
         )
 
 (global-set-key (kbd "M-l") 'ace-window)
+
+;; pdf
+(add-hook 'pdf-view-mode-hook
+  (lambda ()
+    (pdf-misc-size-indication-minor-mode)
+    (pdf-links-minor-mode)
+    (pdf-isearch-minor-mode)
+    (pdf-view-midnight-minor-mode)
+  )
+)
+(setq pdf-view-midnight-colors '("#74B9C3" . "#3D4C55"))
