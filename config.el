@@ -121,3 +121,21 @@
   )
 )
 (setq pdf-view-midnight-colors '("#74B9C3" . "#3D4C55"))
+
+;; multi-cursor
+(global-set-key (kbd "C-c c") 'mc/edit-lines)
+(global-set-key (kbd "C-c n") 'mc/mark-next-like-this)
+(global-set-key (kbd "C-c p") 'mc/mark-previous-like-this)
+(global-set-key (kbd "C-c a") 'mc/mark-all-like-this)
+(setq mc/always-run-for-all t)
+
+(defun insert-rectangle-push-lines ()
+  "Yank a rectangle as if it was an ordinary kill."
+  (interactive "*")
+  (when (and (use-region-p) (delete-selection-mode))
+    (delete-region (region-beginning) (region-end)))
+  (save-restriction
+    (narrow-to-region (point) (mark))
+    (yank-rectangle)))
+
+(global-set-key (kbd "C-x r C-y") #'insert-rectangle-push-lines)
