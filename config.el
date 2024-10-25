@@ -133,3 +133,22 @@
     (yank-rectangle)))
 
 (global-set-key (kbd "C-x r C-y") #'insert-rectangle-push-lines)
+
+
+;; rss
+(after! elfeed
+  (add-hook 'elfeed-search-mode-hook #'elfeed-update)
+  (setq elfeed-search-filter "@1-month-ago +unread")
+  (setq elfeed-show-entry-switch #'my/elfeed-show-entry
+        elfeed-show-entry-delete #'my/elfeed-kill-buffer)
+  (defun my/elfeed-show-entry (buff)
+    (popwin:popup-buffer buff
+                         :position 'right
+                         :width 0.5
+                         :dedicated t
+                         :stick t))
+  (defun my/elfeed-kill-buffer ()
+    (interactive)
+    (let ((window (get-buffer-window (get-buffer "*elfeed-entry*"))))
+      (kill-buffer (get-buffer "*elfeed-entry*"))
+      (delete-window window))))
