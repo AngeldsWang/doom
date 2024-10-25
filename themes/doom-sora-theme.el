@@ -130,7 +130,7 @@ determine the exact padding."
 
    ;; helm
    (helm-ff-file-extension :foreground old-rose)
-   (helm-source-header :foreground grey-nickel :background old-rose)
+   (helm-source-header :inherit 'bold :foreground fg-alt :background modeline-fg-alt)
    (helm-selection :inherit 'bold :foreground grey-nickel :background selection)
    (helm-selection-line :foreground dark-grey :distant-foreground dark-grey :background orange)
    (helm-match :foreground highlight)
