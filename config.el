@@ -102,11 +102,13 @@
 ;; helm
 (after! helm
         (global-set-key (kbd "C-x C-b")      'helm-buffers-list)
+        (global-set-key (kbd "C-x C-d")      'helm-browse-project)
+        (global-set-key (kbd "C-x C-f")      'helm-find-files)
+        (global-set-key (kbd "C-s")          'helm-do-ag-this-file)
         (define-key helm-map (kbd "<tab>")   'helm-execute-persistent-action) ; rebind tab to run persistent action
         (define-key helm-map (kbd "C-i")     'helm-execute-persistent-action) ; make TAB works in terminal
         (define-key helm-map (kbd "C-z")     'helm-select-action) ; list actions using C-z
         (define-key global-map (kbd "C-o")   'helm-occur)
-        (define-key global-map (kbd "C-s")   'helm-do-grep-ag)
         (define-key global-map (kbd "M-g g") 'helm-grep-do-git-grep)
         )
 
