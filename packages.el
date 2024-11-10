@@ -49,4 +49,10 @@
 ;; ...Or *all* packages (NOT RECOMMENDED; will likely break things)
 ;(unpin! t)
 
+(package! ellama)
+(package! go-playground)
 (package! helm-ag)
+(package! nov)
+(package! python-black)
+(package! rust-playground)
+(package! symbol-overlay)

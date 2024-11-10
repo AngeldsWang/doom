@@ -99,18 +99,32 @@
 (global-set-key (kbd "M-l") 'ace-window)
 
 
+;; string
+(use-package! string-inflection
+  :bind (("C-c C-u" . string-inflection-all-cycle)
+         ("C-c C-s" . string-inflection-underscore)))
+
+
+;; multi-cursors
+(use-package! multiple-cursors
+  :config
+  (setq mc/always-run-for-all t))
+
+
 ;; helm
 (after! helm
         (global-set-key (kbd "C-x C-b")      'helm-buffers-list)
         (global-set-key (kbd "C-x C-d")      'helm-browse-project)
         (global-set-key (kbd "C-x C-f")      'helm-find-files)
         (global-set-key (kbd "C-s")          'helm-do-ag-this-file)
+
         (define-key helm-map (kbd "<tab>")   'helm-execute-persistent-action) ; rebind tab to run persistent action
         (define-key helm-map (kbd "C-i")     'helm-execute-persistent-action) ; make TAB works in terminal
         (define-key helm-map (kbd "C-z")     'helm-select-action) ; list actions using C-z
         (define-key global-map (kbd "C-o")   'helm-occur)
         (define-key global-map (kbd "M-g g") 'helm-grep-do-git-grep)
-        )
+
+        (setq helm-ag-insert-at-point 'symbol))
 
 
 ;; pdf
@@ -154,3 +168,84 @@
     (let ((window (get-buffer-window (get-buffer "*elfeed-entry*"))))
       (kill-buffer (get-buffer "*elfeed-entry*"))
       (delete-window window))))
+
+
+;; ollama
+(defvar llm-local-chat-model "llama3.2:latest"
+  "Default local model to use for chat.")
+
+(defvar llm-local-embedding-model "nomic-embed-text"
+  "Default local model to use for embeddings.")
+
+(use-package! ellama
+  :defer t
+  :init
+  (require 'llm-ollama)
+  (require 'llm-openai)
+  (setopt ellama-enable-keymap t
+          ellama-keymap-prefix "C-|"
+          ellama-auto-scroll t)
+
+  (setopt ellama-language "English")
+  (setopt ellama-provider
+          (make-llm-ollama
+           :chat-model llm-local-chat-model
+           :embedding-model llm-local-embedding-model))
+  (setopt ellama-user-nick (car (string-split user-full-name)))
+  (setopt ellama-providers
+          '(("llama3.1"  . (make-llm-ollama
+                            :chat-model llm-local-chat-model
+                            :embedding-model llm-local-embedding-model))
+            ("llama3.2"  . (make-llm-ollama
+                            :chat-model "llama3.2:latest"
+                            :embedding-model llm-local-embedding-model))
+            ("codestral" . (make-llm-ollama
+                            :chat-model "codestral:latest"
+                            :embedding-model llm-local-embedding-model))
+            ("mistral"   . (make-llm-ollama
+                            :chat-model "mistral:latest"
+                            :embedding-model llm-local-embedding-model))
+            ("nemo"      . (make-llm-ollama
+                            :chat-model "mistral-nemo:latest"
+                            :embedding-model llm-local-embedding-model))
+            ("codestral" . (make-llm-ollama
+                            :chat-model "codestral"
+                            :embedding-model llm-local-embedding-model))
+            ("aya"       . (make-llm-ollama
+                            :chat-model "aya"
+                            :embedding-model llm-local-embedding-model))))
+  (setopt ellama-naming-provider
+          (make-llm-ollama
+           :chat-model llm-local-chat-model
+           :embedding-model llm-local-embedding-model))
+  (setopt ellama-naming-scheme 'ellama-generate-name-by-llm)
+  (setopt ellama-translation-provider (make-llm-ollama
+                                       :chat-model "llama3.2"
+                                       :embedding-model llm-local-embedding-model)))
+
+
+
+;; py
+(use-package! python-black
+  :after python
+  :hook (python-mode . python-black-on-save-mode))
+
+
+;; json
+;; require jq preinstalled
+(defun json-unpretty-print (beg end)
+  (interactive "r")
+  (shell-command-on-region beg end "jq -c ." nil t))
+
+
+;; epub
+(add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
+
+
+;; highlight symbols
+(use-package! symbol-overlay
+  :bind (("M-i" . symbol-overlay-put)
+         ("M-n" . symbol-overlay-switch-forward)
+         ("M-p" . symbol-overlay-switch-backward)
+         ("<f7>" . symbol-overlay-mode)
+         ("<f8>" . symbol-overlay-remove-all)))

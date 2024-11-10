@@ -140,6 +140,9 @@ determine the exact padding."
    (helm-swoop-target-line-block-face :foreground yellow)
    (helm-swoop-target-word-face       :foreground orange :inherit 'bold)
    (helm-swoop-target-number-face     :foreground base5)
+   (helm-rg-preview-line-highlight    :foreground dark-grey :background orange)
+   (helm-rg-base-rg-cmd-face          :foreground fg-alt :background modeline-fg-alt)
+   (helm-rg-file-match-face           :foreground highlight :underline t :inherit 'bold)
 
    ;; company
    (company-tooltip-selection  :background bg-alt :foreground red  :weight 'bold)
