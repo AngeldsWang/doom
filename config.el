@@ -99,6 +99,20 @@
 (global-set-key (kbd "M-l") 'ace-window)
 
 
+;; env
+(when (or (daemonp) (memq window-system '(mac ns x)))
+  (setq exec-path-from-shell-arguments '("-l"))
+  (setq exec-path-from-shell-check-startup-files nil)
+  (exec-path-from-shell-initialize)
+  (exec-path-from-shell-copy-env "PATH")
+  (exec-path-from-shell-copy-env "GOPATH")
+  (exec-path-from-shell-copy-env "LANG")
+  (exec-path-from-shell-copy-env "LANGUAGE")
+  (exec-path-from-shell-copy-env "LC_CTYPE")
+  (exec-path-from-shell-copy-env "LC_NAME")
+  (exec-path-from-shell-copy-env "LC_ALL"))
+
+
 ;; string
 (use-package! string-inflection
   :bind (("C-c C-u" . string-inflection-all-cycle)
@@ -127,6 +141,12 @@
         (setq helm-ag-insert-at-point 'symbol))
 
 
+;; auth
+(epa-file-enable)
+(setq epg-pinentry-mode 'loopback)
+(setq auth-sources
+    '((:source "~/.authinfo.gpg")))
+
 ;; pdf
 (add-hook 'pdf-view-mode-hook
   (lambda ()
@@ -150,6 +170,13 @@
 
 (global-set-key (kbd "C-x r C-y") #'insert-rectangle-push-lines)
 
+
+;; dired
+(use-package! dired-ranger
+  :bind (:map dired-mode-map
+              ("W" . dired-ranger-copy)
+              ("X" . dired-ranger-move)
+              ("Y" . dired-ranger-paste)))
 
 ;; rss
 (after! elfeed
@@ -225,10 +252,55 @@
 
 
 
+;; gptel
+(use-package! gptel
+ :defer
+ :config
+ (defun my/gptel-api-key (host)
+   (let ((secret (auth-source-pick-first-password
+                  :host host)))
+     secret))
+ (setq
+  gptel-default-mode 'org-mode
+  gptel-model 'claude-3-5-sonnet-20241022
+  gptel-backend (gptel-make-anthropic "Claude"
+                                      :stream t :key (my/gptel-api-key "api.anthropic.com"))))
+
+;; git
+(use-package! browse-at-remote
+  :config
+  (global-set-key (kbd "C-c g g") 'browse-at-remote)
+  (add-to-list 'browse-at-remote-remote-type-regexps
+               '(:host "code.byted.org" :type "gitlab")))
+
+;; go
+(use-package! go-mode
+  :init
+  (setq gofmt-command "goimports")
+  (add-hook 'before-save-hook 'gofmt-before-save))
+
+(use-package! go-playground
+  :custom
+  (go-playground-basedir "~/Go/src/playground"))
+
+
 ;; py
-(use-package! python-black
-  :after python
-  :hook (python-mode . python-black-on-save-mode))
+(use-package! lsp-pyright
+  :custom (lsp-pyright-langserver-command "pyright")
+  :hook (python-mode . (lambda ()
+                         (require 'lsp-pyright)
+                         (lsp))))
+
+(after! python
+  (setq flycheck-python-ruff-executable "ruff")
+  (setq-hook! 'python-mode-hook +format-with 'ruff))
+
+(use-package! reformatter
+  :config
+  (reformatter-define ruff-format
+    :program "ruff"
+    :args '("format" "-"))
+  (add-hook 'python-mode-hook #'ruff-format-on-save-mode))
 
 
 ;; json
@@ -249,3 +321,25 @@
          ("M-p" . symbol-overlay-switch-backward)
          ("<f7>" . symbol-overlay-mode)
          ("<f8>" . symbol-overlay-remove-all)))
+
+;; thrift
+(after! thrift
+  (setq thrift-indent-level 4))
+
+
+;; utils
+(defun func-region (start end func)
+  "run a function over the region between START and END in current buffer."
+  (save-excursion
+    (let ((text (delete-and-extract-region start end)))
+      (insert (funcall func text)))))
+
+(defun url-encode-region (start end)
+  "urlencode the region between START and END in current buffer."
+  (interactive "r")
+  (func-region start end #'url-hexify-string))
+
+(defun url-decode-region (start end)
+  "de-urlencode the region between START and END in current buffer."
+  (interactive "r")
+  (func-region start end #'url-unhex-string))
