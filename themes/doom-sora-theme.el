@@ -196,6 +196,11 @@ determine the exact padding."
    (flycheck-error   :underline `(:style wave :color ,red))
    (flycheck-warning :underline `(:style wave :color ,orange))
 
+   ;; jupyter
+   (jupyter-repl-input-prompt :foreground green)
+   (jupyter-repl-output-prompt :foreground red)
+   (jupyter-repl-traceback :background bg)
+
    )
 
   ;; --- variables --------------------------
