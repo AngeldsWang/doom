@@ -42,7 +42,6 @@
 ;; change `org-directory'. It must be set before org loads!
 (setq org-directory "~/.config/doom/org/")
 
-
 ;; Whenever you reconfigure a package, make sure to wrap your config in an
 ;; `after!' block, otherwise Doom's defaults may override your settings. E.g.
 ;;
@@ -98,6 +97,8 @@
 ;; buffers
 (global-set-key (kbd "M-l") 'ace-window)
 
+;; line-wrapper
+(+global-word-wrap-mode +1)
 
 ;; env
 (when (or (daemonp) (memq window-system '(mac ns x)))
@@ -177,6 +178,17 @@
               ("W" . dired-ranger-copy)
               ("X" . dired-ranger-move)
               ("Y" . dired-ranger-paste)))
+
+
+;; org
+(after! org-download
+  (setq org-download-method 'directory)
+  (setq org-download-image-dir "~/.config/doom/org/notes/images")
+  (setq org-download-heading-lvl nil)
+  (setq org-download-timestamp "%Y%m%d-%H%M%S_")
+  (setq org-download-link-format "[[file:images/%s]]\n")
+  (setq org-image-actual-width 400))
+
 
 ;; rss
 (after! elfeed
