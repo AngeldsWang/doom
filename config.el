@@ -82,7 +82,7 @@
 (global-set-key [(hyper v)] 'yank)
 (global-set-key [(hyper c)] 'kill-ring-save)
 (global-set-key [(hyper x)] 'kill-region)
-(global-set-key [(hyper k)] 'kill-this-buffer)
+(global-set-key [(hyper k)] 'kill-current-buffer)
 (global-set-key [(hyper s)] 'save-buffer)
 (global-set-key [(hyper l)] 'goto-line)
 (global-set-key [(hyper w)]
@@ -128,35 +128,35 @@
 
 ;; helm
 (after! helm
-        (global-set-key (kbd "C-x C-b")      'helm-buffers-list)
-        (global-set-key (kbd "C-x C-d")      'helm-browse-project)
-        (global-set-key (kbd "C-x C-f")      'helm-find-files)
-        (global-set-key (kbd "C-s")          'helm-do-ag-this-file)
+  (global-set-key (kbd "C-x C-b")      'helm-buffers-list)
+  (global-set-key (kbd "C-x C-d")      'helm-browse-project)
+  (global-set-key (kbd "C-x C-f")      'helm-find-files)
+  (global-set-key (kbd "C-s")          'helm-do-ag-this-file)
 
-        (define-key helm-map (kbd "<tab>")   'helm-execute-persistent-action) ; rebind tab to run persistent action
-        (define-key helm-map (kbd "C-i")     'helm-execute-persistent-action) ; make TAB works in terminal
-        (define-key helm-map (kbd "C-z")     'helm-select-action) ; list actions using C-z
-        (define-key global-map (kbd "C-o")   'helm-occur)
-        (define-key global-map (kbd "M-g g") 'helm-grep-do-git-grep)
+  (define-key helm-map (kbd "<tab>")   'helm-execute-persistent-action) ; rebind tab to run persistent action
+  (define-key helm-map (kbd "C-i")     'helm-execute-persistent-action) ; make TAB works in terminal
+  (define-key helm-map (kbd "C-z")     'helm-select-action) ; list actions using C-z
+  (define-key global-map (kbd "C-o")   'helm-occur)
+  (define-key global-map (kbd "M-g g") 'helm-grep-do-git-grep)
 
-        (setq helm-ag-insert-at-point 'symbol))
+  (setq helm-ag-insert-at-point 'symbol))
 
 
 ;; auth
 (epa-file-enable)
 (setq epg-pinentry-mode 'loopback)
 (setq auth-sources
-    '((:source "~/.authinfo.gpg")))
+      '((:source "~/.authinfo.gpg")))
 
 ;; pdf
 (add-hook 'pdf-view-mode-hook
-  (lambda ()
-    (pdf-misc-size-indication-minor-mode)
-    (pdf-links-minor-mode)
-    (pdf-isearch-minor-mode)
-    (pdf-view-midnight-minor-mode)
-  )
-)
+          (lambda ()
+            (pdf-misc-size-indication-minor-mode)
+            (pdf-links-minor-mode)
+            (pdf-isearch-minor-mode)
+            (pdf-view-midnight-minor-mode)
+            )
+          )
 (setq pdf-view-midnight-colors '("#74B9C3" . "#3D4C55"))
 
 ;; multi-cursor
@@ -179,6 +179,13 @@
               ("X" . dired-ranger-move)
               ("Y" . dired-ranger-paste)))
 
+;; tex
+(after! tex
+  (setq TeX-command-default "XeLaTeX")
+  (setq TeX-engine 'xetex)
+  (add-to-list 'TeX-command-list
+               '("XeLaTeX" "%`xelatex%(mode)%' %t" TeX-run-TeX nil t)))
+
 
 ;; org
 (after! org-download
@@ -186,7 +193,8 @@
   (setq org-download-image-dir "~/.config/doom/org/notes/images")
   (setq org-download-heading-lvl nil)
   (setq org-download-timestamp "%Y%m%d-%H%M%S_")
-  (setq org-download-link-format "[[file:images/%s]]\n")
+  (setq org-download-link-format "[[file:%s]]\n"
+        org-download-abbreviate-filename-function #'file-relative-name)
   (setq org-image-actual-width 400))
 
 
@@ -266,17 +274,17 @@
 
 ;; gptel
 (use-package! gptel
- :defer
- :config
- (defun my/gptel-api-key (host)
-   (let ((secret (auth-source-pick-first-password
-                  :host host)))
-     secret))
- (setq
-  gptel-default-mode 'org-mode
-  gptel-model 'claude-3-5-sonnet-20241022
-  gptel-backend (gptel-make-anthropic "Claude"
-                                      :stream t :key (my/gptel-api-key "api.anthropic.com"))))
+  :defer
+  :config
+  (defun my/gptel-api-key (host)
+    (let ((secret (auth-source-pick-first-password
+                   :host host)))
+      secret))
+  (setq
+   gptel-default-mode 'org-mode
+   gptel-model 'claude-3-5-sonnet-20241022
+   gptel-backend (gptel-make-anthropic "Claude"
+                   :stream t :key (my/gptel-api-key "api.anthropic.com"))))
 
 ;; git
 (use-package! browse-at-remote
